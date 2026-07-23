@@ -200,6 +200,8 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 8px;
 		}
 
 		/* 전체 선택 버튼 토글 강조 스타일 */
@@ -288,12 +290,6 @@
 			margin-bottom: 20px;
 		}
 
-		@media (max-width: 900px) {
-			.editor-grid {
-				grid-template-columns: 1fr;
-			}
-		}
-
 		.editor-box {
 			display: flex;
 			flex-direction: column;
@@ -368,6 +364,48 @@
 			font-size: 0.75rem;
 			color: #22c55e;
 			display: none;
+		}
+
+		/* 📱 모바일 전용 반응형 레이아웃 수정 */
+		@media (max-width: 900px) {
+			body {
+				padding: 12px 8px;
+			}
+
+			.container {
+				padding: 20px 16px;
+			}
+
+			.header {
+				flex-direction: column;
+				align-items: center;
+				gap: 12px;
+			}
+
+			.header h1 {
+				font-size: 1.4rem;
+				text-align: center;
+			}
+
+			.dark-mode-toggle {
+				position: static;
+			}
+
+			.options-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.editor-grid {
+				grid-template-columns: 1fr;
+			}
+
+			textarea {
+				height: 300px;
+			}
+
+			.btn-group {
+				flex-direction: column;
+			}
 		}
 	</style>
 </head>
@@ -461,7 +499,7 @@
 					정돈된 HTML 코드
 					<span id="copyBadge" class="copy-badge">✓ 클립보드에 복사됨!</span>
 				</label>
-				<textarea id="outputHtml" readonly placeholder="포맷팅 버튼을 누르면 정제 및 Tab 정돈된 코드가 출력됩니다."></textarea>
+				<textarea id="outputHtml" readonly placeholder="태그 삭제 및 코드 정리 버튼을 누르면 정리된 코드가 출력됩니다."></textarea>
 			</div>
 		</div>
 
@@ -584,17 +622,21 @@
 				});
 			}
 
-			// 태그 안쪽 양끝의 쓸데없는 공백/줄바꿈 제거
+			// 태그 양끝 공백을 지우되, 주석(<!--) 시작 지점 앞에는 강제로 줄바꿈(\n) 추가
 			cleanedHtml = cleanedHtml
-				.replace(/>\s+/g, '>')  // 태그 연 직후 공백 제거
-				.replace(/\s+</g, '<'); // 태그 닫히기 직전 공백 제거
+				.replace(/>\s+/g, '>')
+				.replace(/\s+</g, '<')
+				.replace(/<!--/g, '\n<!--'); // 🔥 이 줄을 추가하여 주석을 강제로 다음 줄로 이동
+
+			// <br> 태그 앞뒤에 있는 모든 줄바꿈, 탭, 공백을 한 줄로 단축
+			cleanedHtml = cleanedHtml.replace(/\s*<br\s*\/?>\s*/gi, '<br>');
 
 			// 3. Tab 들여쓰기 옵션으로 js-beautify 포맷팅 설정
 			const options = {
 				indent_size: 1,
 				indent_char: "\t",         // Tab 문자로 들여쓰기
 				indent_with_tabs: true,    // Tab 들여쓰기 활성화
-				inline: ["span", "strong", "a", "b", "i"], // td, th는 줄바꿈되도록 제거
+				inline: ["a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "datalist", "del", "dfn", "em", "i", "ins", "kbd", "mark", "meter", "output", "progress", "q", "rp", "rt", "s", "samp", "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr"],
 				unformatted: [],
 				max_preserve_newlines: 1,
 				preserve_newlines: false,  // 원본의 불필요한 줄바꿈 제거
