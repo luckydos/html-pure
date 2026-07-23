@@ -6,7 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>HTML Pure</title>
 
-	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧹</text></svg>">
+	<link rel="icon"
+		href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧹</text></svg>">
 
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,8 +24,36 @@
 			--text-main: #0f172a;
 			--text-muted: #64748b;
 			--border-color: #e2e8f0;
+			--box-bg: #fafafa;
+			--guide-bg: #f1f5f9;
+			--editor-bg: #f8fafc;
+			--editor-text: #1e293b;
+			--toggle-bg: #eff6ff;
+			--toggle-border: #bfdbfe;
+			--code-bg: #e2e8f0;
+			--code-text: #0f172a;
 			--radius: 12px;
 			--shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+		}
+
+		/* 🌙 다크모드 변수 정의 */
+		[data-theme="dark"] {
+			--primary-color: #3b82f6;
+			--primary-hover: #60a5fa;
+			--bg-color: #0f172a;
+			--card-bg: #1e293b;
+			--text-main: #f8fafc;
+			--text-muted: #94a3b8;
+			--border-color: #334155;
+			--box-bg: #0f172a;
+			--guide-bg: #0f172a;
+			--editor-bg: #0f172a;
+			--editor-text: #f1f5f9;
+			--toggle-bg: #1e3a8a;
+			--toggle-border: #1d4ed8;
+			--code-bg: #334155;
+			--code-text: #f8fafc;
+			--shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
 		}
 
 		* {
@@ -32,6 +61,7 @@
 			margin: 0;
 			padding: 0;
 			font-family: 'Noto Sans KR', sans-serif;
+			transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 		}
 
 		body {
@@ -56,25 +86,89 @@
 
 		.header {
 			margin-bottom: 20px;
-			text-align: center;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			position: relative;
 		}
 
 		.header h1 {
 			font-size: 1.75rem;
 			font-weight: 700;
 			color: var(--text-main);
+			flex: 1;
+			text-align: center;
+		}
+
+		/* 🌙 다크모드 스위치 스타일 */
+		.dark-mode-toggle {
+			position: absolute;
+			right: 0;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 0.85rem;
+			font-weight: 600;
+			color: var(--text-muted);
+			cursor: pointer;
+			user-select: none;
+		}
+
+		.switch {
+			position: relative;
+			display: inline-block;
+			width: 44px;
+			height: 24px;
+		}
+
+		.switch input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+
+		.slider {
+			position: absolute;
+			cursor: pointer;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: #cbd5e1;
+			transition: .3s;
+			border-radius: 24px;
+		}
+
+		.slider:before {
+			position: absolute;
+			content: "";
+			height: 18px;
+			width: 18px;
+			left: 3px;
+			bottom: 3px;
+			background-color: white;
+			transition: .3s;
+			border-radius: 50%;
+		}
+
+		input:checked+.slider {
+			background-color: var(--primary-color);
+		}
+
+		input:checked+.slider:before {
+			transform: translateX(20px);
 		}
 
 		/* 상단 설명 가이드 카드 */
 		.guide-card {
-			background-color: #f1f5f9;
+			background-color: var(--guide-bg);
 			border: 1px solid var(--border-color);
 			border-left: 4px solid var(--primary-color);
 			border-radius: 8px;
 			padding: 16px 20px;
 			margin-bottom: 20px;
 			font-size: 0.88rem;
-			color: #334155;
+			color: var(--text-muted);
 			line-height: 1.6;
 		}
 
@@ -91,7 +185,7 @@
 
 		/* 기본 삭제 옵션 체크박스 영역 */
 		.default-options-box {
-			background-color: #fafafa;
+			background-color: var(--box-bg);
 			border: 1px solid var(--border-color);
 			border-radius: 8px;
 			padding: 16px;
@@ -117,10 +211,10 @@
 			display: flex;
 			align-items: center;
 			gap: 6px;
-			background-color: #eff6ff;
+			background-color: var(--toggle-bg);
 			padding: 4px 10px;
 			border-radius: 6px;
-			border: 1px solid #bfdbfe;
+			border: 1px solid var(--toggle-border);
 		}
 
 		.options-grid {
@@ -134,7 +228,7 @@
 			align-items: center;
 			gap: 8px;
 			font-size: 0.85rem;
-			color: #334155;
+			color: var(--text-muted);
 			cursor: pointer;
 			user-select: none;
 		}
@@ -148,12 +242,12 @@
 		}
 
 		.checkbox-label code {
-			background-color: #e2e8f0;
+			background-color: var(--code-bg);
 			padding: 2px 6px;
 			border-radius: 4px;
 			font-family: 'Fira Code', monospace;
 			font-size: 0.8rem;
-			color: #0f172a;
+			color: var(--code-text);
 		}
 
 		/* 사용자 정의 삭제 입력 필드 */
@@ -174,15 +268,14 @@
 			padding: 10px 14px;
 			font-size: 0.88rem;
 			color: var(--text-main);
-			background-color: #fafafa;
+			background-color: var(--box-bg);
 			border: 1px solid var(--border-color);
 			border-radius: 8px;
 			outline: none;
-			transition: all 0.2s ease;
 		}
 
 		.custom-delete-box input[type="text"]:focus {
-			background-color: #ffffff;
+			background-color: var(--card-bg);
 			border-color: var(--primary-color);
 			box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 		}
@@ -223,8 +316,8 @@
 			font-family: 'Fira Code', monospace;
 			font-size: 0.88rem;
 			line-height: 1.5;
-			color: #1e293b;
-			background-color: #f8fafc;
+			color: var(--editor-text);
+			background-color: var(--editor-bg);
 			border: 1px solid var(--border-color);
 			border-radius: 8px;
 			outline: none;
@@ -233,7 +326,7 @@
 		}
 
 		textarea:focus {
-			background-color: #ffffff;
+			background-color: var(--card-bg);
 			border-color: var(--primary-color);
 			box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 		}
@@ -251,7 +344,6 @@
 			border: none;
 			border-radius: 8px;
 			cursor: pointer;
-			transition: all 0.2s ease;
 		}
 
 		.btn-primary {
@@ -264,17 +356,17 @@
 		}
 
 		.btn-secondary {
-			background-color: #e2e8f0;
-			color: #334155;
+			background-color: var(--code-bg);
+			color: var(--text-main);
 		}
 
 		.btn-secondary:hover {
-			background-color: #cbd5e1;
+			opacity: 0.8;
 		}
 
 		.copy-badge {
 			font-size: 0.75rem;
-			color: #16a34a;
+			color: #22c55e;
 			display: none;
 		}
 	</style>
@@ -285,6 +377,15 @@
 	<div class="container">
 		<div class="header">
 			<h1>🧹 HTML Pure Cleaner</h1>
+
+			<!-- 🌙 다크모드 On/Off 스위치 추가 -->
+			<div class="dark-mode-toggle">
+				<span id="themeModeIcon">🌙</span>
+				<label class="switch">
+					<input type="checkbox" id="darkModeToggle" onclick="toggleDarkMode()">
+					<span class="slider"></span>
+				</label>
+			</div>
 		</div>
 
 		<!-- 상단 설명 가이드 카드 -->
@@ -301,7 +402,7 @@
 		<div class="default-options-box">
 			<div class="options-title">
 				<span>⚙️ 기본 삭제 대상 선택</span>
-				<!-- 💡 전체 선택 / 해제 토글 체크박스 추가 -->
+				<!-- 전체 선택 / 해제 토글 체크박스 -->
 				<label class="toggle-all-label">
 					<input type="checkbox" id="selectAll" checked onclick="toggleAllCheckboxes(this)">
 					전체 선택 / 해제
@@ -365,7 +466,7 @@
 		</div>
 
 		<div class="btn-group">
-			<button class="btn-primary" onclick="processHtml()">✨ 태그 정제 및 Tab 포맷팅</button>
+			<button class="btn-primary" onclick="processHtml()">🧹 태그 삭제 및 코드 정리</button>
 			<button class="btn-secondary" onclick="copyResult()">📋 결과 복사</button>
 		</div>
 	</div>
@@ -373,7 +474,58 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.11/beautify-html.min.js"></script>
 
 	<script>
-		// 💡 전체 선택 / 해제 동작 함수
+		// 💡 기본 모드 설정 ('dark' 또는 'light' 지정 가능)
+		const DEFAULT_THEME = 'dark';
+
+		// 💡 페이지 로드 완료 시 실행되는 초기화 로직
+		window.addEventListener('DOMContentLoaded', () => {
+			// 1. 원본 HTML 입력창 자동 포커스
+			const inputArea = document.getElementById('inputHtml');
+			if (inputArea) inputArea.focus();
+
+			// 2. 테마 초기 설정 (사용자 저장 값이 없으면 DEFAULT_THEME 적용)
+			const toggleSwitch = document.getElementById('darkModeToggle');
+			const themeIcon = document.getElementById('themeModeIcon');
+			const savedTheme = localStorage.getItem('theme');
+
+			// 저장된 값이 없으면 DEFAULT_THEME 사용, 저장된 값이 있으면 저장된 테마 사용
+			const initialTheme = savedTheme ? savedTheme : DEFAULT_THEME;
+			const isDark = initialTheme === 'dark';
+
+			// UI 적용
+			document.documentElement.setAttribute('data-theme', initialTheme);
+			if (toggleSwitch) toggleSwitch.checked = isDark;
+			if (themeIcon) themeIcon.textContent = isDark ? '☀️' : '🌙';
+
+			// 단축키(Ctrl + Enter / Cmd + Enter)로 포맷팅 실행 이벤트 추가
+			if (inputArea) {
+				inputArea.addEventListener('keydown', (e) => {
+					// Ctrl + Enter 또는 Cmd + Enter 입력 시
+					if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+						e.preventDefault(); // 줄바꿈 기본 동작 방지
+						processHtml();       // 포맷팅 함수 실행
+					}
+				});
+			}
+		});
+
+		// 💡 다크모드 토글 함수
+		function toggleDarkMode() {
+			const toggleSwitch = document.getElementById('darkModeToggle');
+			const themeIcon = document.getElementById('themeModeIcon');
+
+			if (toggleSwitch.checked) {
+				document.documentElement.setAttribute('data-theme', 'dark');
+				localStorage.setItem('theme', 'dark');
+				if (themeIcon) themeIcon.textContent = '☀️';
+			} else {
+				document.documentElement.setAttribute('data-theme', 'light');
+				localStorage.setItem('theme', 'light');
+				if (themeIcon) themeIcon.textContent = '🌙';
+			}
+		}
+
+		// 전체 선택 / 해제 동작 함수
 		function toggleAllCheckboxes(master) {
 			const checkboxes = document.querySelectorAll('.opt-check');
 			checkboxes.forEach(cb => {
@@ -381,7 +533,7 @@
 			});
 		}
 
-		// 💡 개별 체크박스 조작 시 '전체 선택' 체크박스 상태 동기화
+		// 개별 체크박스 조작 시 '전체 선택' 체크박스 상태 동기화
 		function syncSelectAllState() {
 			const checkboxes = document.querySelectorAll('.opt-check');
 			const selectAll = document.getElementById('selectAll');
@@ -402,9 +554,15 @@
 			const deletePatterns = [];
 
 			if (document.getElementById('delStyle').checked) deletePatterns.push(/style=".*?"/gi);
-			if (document.getElementById('delP').checked) deletePatterns.push(/<p>|<\/p>/gi);
-			if (document.getElementById('delSpan').checked) deletePatterns.push(/<span>|<\/span>/gi);
-			if (document.getElementById('delStrong').checked) deletePatterns.push(/<strong>|<\/strong>/gi);
+
+			if (document.getElementById('delP').checked) {
+				deletePatterns.push(/<p[^>]*>\s*/gi); // <p> 및 태그 직후 공백/줄바꿈 제거
+				deletePatterns.push(/\s*<\/p>/gi);    // </p> 및 태그 직전 공백/줄바꿈 제거
+			}
+
+			if (document.getElementById('delSpan').checked) deletePatterns.push(/<\/?span[^>]*>/gi);
+			if (document.getElementById('delStrong').checked) deletePatterns.push(/<\/?strong[^>]*>/gi);
+
 			if (document.getElementById('delClass0').checked) deletePatterns.push(/ class="0"/gi);
 			if (document.getElementById('delValign').checked) deletePatterns.push(/ valign="middle"/gi);
 			if (document.getElementById('delRowspan').checked) deletePatterns.push(/ rowspan="1"/gi);
@@ -426,16 +584,23 @@
 				});
 			}
 
+			// 태그 안쪽 양끝의 쓸데없는 공백/줄바꿈 제거
+			cleanedHtml = cleanedHtml
+				.replace(/>\s+/g, '>')  // 태그 연 직후 공백 제거
+				.replace(/\s+</g, '<'); // 태그 닫히기 직전 공백 제거
+
 			// 3. Tab 들여쓰기 옵션으로 js-beautify 포맷팅 설정
 			const options = {
 				indent_size: 1,
 				indent_char: "\t",         // Tab 문자로 들여쓰기
 				indent_with_tabs: true,    // Tab 들여쓰기 활성화
+				inline: ["span", "strong", "a", "b", "i"], // td, th는 줄바꿈되도록 제거
+				unformatted: [],
 				max_preserve_newlines: 1,
-				preserve_newlines: true,
+				preserve_newlines: false,  // 원본의 불필요한 줄바꿈 제거
 				indent_scripts: "normal",
 				end_with_newline: false,
-				wrap_line_length: 0
+				wrap_line_length: 0        // 긴 속성 때문에 태그 중간이 깨지는 현상 방지
 			};
 
 			const formattedHtml = html_beautify(cleanedHtml, options);
